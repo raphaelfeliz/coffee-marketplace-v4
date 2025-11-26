@@ -1,0 +1,26 @@
+
+# Coffee Marketplace V4 Project Specs
+
+project:
+	name: Coffee Marketplace V4
+	description: Static site for connecting coffee producers and consumers. Features accessibility improvements, product marketplace, and direct-to-consumer model.
+	author:
+		name: Raphael Feliz
+		github: raphaelfeliz
+
+github:
+	repo: https://github.com/raphaelfeliz/coffee-marketplace-v4
+	pages_url: https://raphaelfeliz.github.io/coffee-marketplace-v4/
+	branch: gh-pages
+
+deployment:
+	platform: GitHub Pages
+	image_asset: cafe-saca.png
+	image_asset_url: https://raphaelfeliz.github.io/coffee-marketplace-v4/cafe-saca.png
+
+site:
+	main_html: index.html
+	css: style.css
+	js: script.js
+	assets:
+		- cafe-saca.png
