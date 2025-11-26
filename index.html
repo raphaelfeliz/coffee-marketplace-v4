@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Direto | A Revolução do Café 2026</title>
+
+    <meta name="description"
+        content="Café Direto: Conectando produtores e Consumidores. Qualidade premium, preço justo, sem intermediários. Lançamento em 2026.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuração Visual -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0a0a',
+                        charcoal: '#141414',
+                        gold: {
+                            400: '#d4af37',
+                            500: '#c5a059',
+                            600: '#b08d55',
+                        },
+                        leaf: {
+                            800: '#1e3a2f',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        widest: '.25em',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 1.2s ease-out forwards',
+                        'fade-in': 'fadeIn 2s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body
+    class="bg-obsidian text-gray-300 font-sans antialiased overflow-x-hidden selection:bg-gold-500 selection:text-white">
+
+    <!-- CAMADA DE TUTORIAL -->
+    <div id="tutorial-overlay" class="fixed inset-0 z-[100] pointer-events-none hidden" data-uid="div-tutorial-overlay">
+        <div id="highlight-box" class="tutorial-highlight" data-uid="div-highlight-box">
+            <div class="pulse-ring"></div>
+        </div>
+
+        <!-- Tooltip Card (Dark Mode) -->
+        <div id="tooltip-card"
+            class="tutorial-tooltip glass-box bg-charcoal/90 p-6 rounded border border-gold-500/30 max-w-sm w-full shadow-2xl"
+            data-uid="div-tooltip-card">
+            <div class="flex justify-between items-start mb-2">
+                <span id="step-count" class="text-[10px] font-bold text-gold-500 uppercase tracking-widest">Passo
+                    1/10</span>
+                <button onclick="endTour()" class="text-gray-400 hover:text-white" type="button"
+                    title="Fechar tutorial"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <h3 id="tooltip-title" class="font-serif text-xl font-bold text-white mb-2">Título</h3>
+            <p id="tooltip-text" class="text-gray-400 text-sm mb-6 leading-relaxed">Descrição.</p>
+            <div class="flex justify-between items-center">
+                <button onclick="prevStep()" id="prev-btn"
+                    class="text-xs text-gray-500 hover:text-white font-bold uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed"
+                    type="button" title="Passo anterior">Anterior</button>
+                <button onclick="nextStep()" id="next-btn"
+                    class="bg-gold-500 text-obsidian px-6 py-2 rounded-sm text-xs uppercase tracking-widest font-bold hover:bg-white transition-colors flex items-center gap-2"
+                    type="button" title="Próximo passo">
+                    Próximo <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão Iniciar Tutorial (Fixo) -->
+    <div id="start-tutorial-btn" class="fixed bottom-8 left-8 z-[90] animate-bounce" data-uid="div-start-tutorial-btn">
+        <button onclick="startTour()"
+            class="bg-gold-500/90 backdrop-blur text-obsidian px-6 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(197,160,89,0.4)] hover:bg-white transition-all flex items-center gap-2 border border-gold-400 text-xs uppercase tracking-widest"
+            type="button" title="Iniciar tour pela plataforma">
+            <i data-lucide="play-circle" class="w-4 h-4"></i> Tour pela Plataforma
+        </button>
+    </div>
+
+    <!-- Navbar -->
+    <nav id="navbar"
+        class="fixed w-full z-50 transition-all duration-300 py-6 px-6 lg:px-12 flex justify-between items-center text-white bg-gradient-to-b from-black/80 to-transparent"
+        data-uid="nav-navbar">
+        <div class="flex items-center gap-3" id="tour-logo">
+            <img src="logo.png" alt="Logo" class="h-12 w-auto rounded-full">
+            <span class="font-serif text-2xl tracking-wider font-bold text-white">CAFÉ DIRETO</span>
+        </div>
+
+        <div class="hidden md:flex items-center gap-8 text-sm tracking-widest uppercase font-bold text-gray-300">
+            <a href="#conceito" class="nav-link hover:text-white transition-colors">O Conceito</a>
+            <a href="#marketplace" class="nav-link hover:text-white transition-colors">Marketplace</a>
+            <a href="#cadastro" class="nav-link hover:text-white transition-colors">Participar</a>
+        </div>
+
+        <button class="md:hidden text-white" type="button" title="Abrir menu de navegação">
+            <i data-lucide="menu" class="w-8 h-8"></i>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="tour-hero"
+        class="relative min-h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden"
+        data-uid="header-tour-hero">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-black/60 z-10"></div>
+            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop"
+                class="w-full h-full object-cover animate-fade-in" alt="Café sendo servido" title="Café sendo servido">
+            <div class="absolute inset-0 bg-noise z-20 pointer-events-none mix-blend-overlay"></div>
+        </div>
+
+        <div class="relative z-30 max-w-5xl mx-auto space-y-8 mt-20">
+            <div id="tour-badge"
+                class="inline-block border border-gold-500/30 bg-gold-500/10 backdrop-blur-sm px-4 py-2 rounded-full mb-4 animate-fade-in-up">
+                <span class="text-gold-500 text-xs uppercase tracking-[0.2em] font-bold">Sem Intermediários. Mais
+                    Lucro.</span>
+            </div>
+
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl leading-tight text-white animate-fade-in-up"
+                style="animation-delay: 0.2s;">
+                O melhor café do Brasil,<br>
+                <span class="text-gradient italic">pelo preço justo.</span>
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-gray-200 font-light text-lg leading-relaxed animate-fade-in-up"
+                style="animation-delay: 0.4s;">
+                Estamos tornando a cadeia mais justa para quem produz e quem aprecia. <br>A partir de 2026, consumidor
+                comprará grãos excepcionais diretamente da mão de quem planta.
+            </p>
+
+            <!-- Countdown Timer -->
+            <div id="tour-countdown"
+                class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-10 animate-fade-in-up"
+                style="animation-delay: 0.6s;">
+                <div class="glass-box p-4 md:p-6 rounded text-center">
+                    <span id="days" class="block text-3xl md:text-5xl font-serif text-white mb-1">000</span>
+                    <span class="text-[10px] uppercase tracking-widest text-gold-500">Dias</span>
+                </div>
+                <div class="glass-box p-4 md:p-6 rounded text-center">
+                    <span id="hours" class="block text-3xl md:text-5xl font-serif text-white mb-1">00</span>
+                    <span class="text-[10px] uppercase tracking-widest text-gold-500">Horas</span>
+                </div>
+                <div class="glass-box p-4 md:p-6 rounded text-center">
+                    <span id="minutes" class="block text-3xl md:text-5xl font-serif text-white mb-1">00</span>
+                    <span class="text-[10px] uppercase tracking-widest text-gold-500">Minutos</span>
+                </div>
+                <div class="glass-box p-4 md:p-6 rounded text-center">
+                    <span id="seconds" class="block text-3xl md:text-5xl font-serif text-white mb-1">00</span>
+                    <span class="text-[10px] uppercase tracking-widest text-gold-500">Segundos</span>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    <!-- Seção: O Problema x A Solução -->
+    <section id="conceito" class="relative z-30 py-32 bg-charcoal border-t border-white/5" data-uid="section-conceito">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 reveal-on-scroll">
+                <span class="text-gold-500 uppercase tracking-widest text-xs font-bold">Transparência Radical</span>
+                <h2 class="font-serif text-4xl md:text-5xl text-white mt-4">Para onde vai o seu lucro?</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center">
+                <!-- Modelo Tradicional -->
+                <div class="bg-stone-900/50 p-8 rounded border border-white/5 reveal-on-scroll">
+                    <div class="flex items-center gap-3 mb-6 opacity-50">
+                        <i data-lucide="x-circle" class="w-6 h-6 text-red-500"></i>
+                        <h3 class="font-serif text-2xl text-gray-400">Modelo Tradicional</h3>
+                    </div>
+                    <ul class="space-y-6 relative border-l border-gray-700 ml-3 pl-8">
+                        <li class="relative">
+                            <span class="absolute -left-10 top-1 w-4 h-4 rounded-full bg-gray-700"></span>
+                            <p class="text-white font-bold">Produtor</p>
+                            <p class="text-sm text-gray-500">Margem mínima de lucro.</p>
+                        </li>
+                        <li class="relative">
+                            <span class="absolute -left-10 top-1 w-4 h-4 rounded-full bg-gray-700"></span>
+                            <p class="text-white font-bold">Intermediários</p>
+                            <p class="text-sm text-gray-500">Corretor, Exportador, Importador.</p>
+                        </li>
+                        <li class="relative">
+                            <span class="absolute -left-10 top-1 w-4 h-4 rounded-full bg-red-500/50"></span>
+                            <p class="text-white font-bold">Consumidor</p>
+                            <p class="text-sm text-gray-500">Paga o preço inflado.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Modelo Café Direto -->
+                <div id="tour-model"
+                    class="bg-leaf-800/20 p-8 rounded border border-gold-500/30 reveal-on-scroll relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-gold-500/10 blur-[50px] rounded-full pointer-events-none">
+                    </div>
+
+                    <div class="flex items-center gap-3 mb-6">
+                        <i data-lucide="check-circle-2" class="w-6 h-6 text-gold-500"></i>
+                        <h3 class="font-serif text-2xl text-white">Modelo Café Direto</h3>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center py-8 gap-4">
+                        <div
+                            class="w-full bg-white/5 p-4 rounded flex items-center justify-between border border-gold-500/20">
+                            <div>
+                                <p class="text-white font-bold text-lg">Produtor</p>
+                                <p class="text-xs text-gold-500">Fica com 90% do valor.</p>
+                            </div>
+                            <i data-lucide="arrow-right" class="text-gold-500"></i>
+                            <div class="text-right">
+                                <p class="text-white font-bold text-lg">Consumidor</p>
+                                <p class="text-xs text-gold-500">Preço justo.</p>
+                            </div>
+                        </div>
+                        <p class="text-center text-sm text-gray-300 mt-4 leading-relaxed">
+                            <strong class="text-white">Todo o resto vai para quem sujou as mãos na terra.</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção: Video / Mockup Produtor -->
+    <section id="revolucao" class="relative z-30 py-32 bg-black border-t border-white/5 overflow-hidden"
+        data-uid="section-revolucao">
+        <div class="absolute inset-0 opacity-20" data-uid="div-bg-revolucao"></div>
+        <div class="relative z-10 max-w-4xl mx-auto px-6 text-center reveal-on-scroll">
+
+            <div class="mb-20 pb-12 border-b border-white/10">
+                <div class="font-serif text-2xl md:text-3xl text-white mb-8">Veja como será sua página em nossa
+                    plataforma</div>
+
+                <!-- Mockup Logo: Produtor de Minas -->
+                <div id="producer-mockup-logo"
+                    class="w-48 h-48 mx-auto mb-8 bg-black/40 backdrop-blur-md border border-gold-500/40 rounded-full flex flex-col items-center justify-center p-6 shadow-[0_0_30px_rgba(197,160,89,0.15)] group transition-transform hover:scale-105"
+                    data-uid="div-producer-mockup-logo">
+                    <svg class="w-16 h-16 text-gold-500 mb-2" viewBox="0 0 100 100" fill="none" stroke="currentColor"
+                        stroke-width="1.5">
+                        <path d="M10 75 Q 30 55 50 75 T 90 75" fill="none" />
+                        <path d="M30 75 Q 50 45 70 75" fill="none" />
+                        <path d="M50 45 L 50 35" />
+                        <path d="M50 35 L 45 40 M 50 35 L 55 40" />
+                        <circle cx="50" cy="25" r="5" fill="currentColor" class="text-gold-500/50" />
+                    </svg>
+                    <span
+                        class="font-serif text-gold-500 font-bold tracking-widest text-sm text-center leading-tight">FAZENDA<br>VILA
+                        RICA</span>
+                    <div class="w-8 h-px bg-gold-500/50 my-2"></div>
+                    <span class="text-[9px] text-gray-400 uppercase tracking-[0.2em]">Sul de Minas</span>
+                </div>
+
+                <button onclick="startTour()"
+                    class="bg-gold-500 text-obsidian px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(197,160,89,0.3)] flex items-center gap-2 mx-auto"
+                    type="button" title="Iniciar tour pela plataforma">
+                    <i data-lucide="play-circle" class="w-5 h-5"></i> Tour Pela Plataforma
+                </button>
+            </div>
+
+            <span class="text-gold-500 uppercase tracking-widest text-xs font-bold">Origem Certificada</span>
+            <h2 class="font-serif text-4xl md:text-5xl text-white my-8">Do grão à xícara: Nossa Jornada</h2>
+
+            <div id="tour-video"
+                class="relative w-full aspect-video bg-charcoal shadow-2xl group cursor-pointer overflow-hidden rounded border border-gold-500/20"
+                data-uid="div-tour-video">
+                <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=2071&auto=format&fit=crop"
+                    class="w-full h-full object-cover opacity-60 transition-opacity duration-500 group-hover:opacity-80"
+                    alt="Thumbnail video" title="Thumbnail do vídeo">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div
+                        class="w-20 h-20 bg-gold-500/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-gold-500 transition-transform duration-300 group-hover:scale-110">
+                        <i data-lucide="play" class="w-8 h-8 text-white ml-1 fill-white"></i>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-gray-400 font-light mt-8 max-w-2xl mx-auto">
+                Conheça a história das famílias que produzem o café que chegará à sua casa em 2026.
+            </p>
+        </div>
+    </section>
+
+    <!-- Seção: Marketplace Completo (Integrada e Adaptada ao Dark Theme) -->
+    <section id="marketplace" class="relative z-30 pt-32 pb-12 bg-charcoal border-t border-white/5"
+        data-uid="section-marketplace">
+
+        <!-- Header da Loja -->
+        <div id="tour-shop-header" class="text-center px-6 mb-16 reveal-on-scroll" data-uid="div-tour-shop-header">
+            <span class="text-gold-500 tracking-[0.3em] uppercase text-xs font-bold">Marketplace Exclusivo</span>
+            <h2 class="font-serif text-4xl md:text-5xl text-white mt-4">Nossos Cafés</h2>
+            <p class="text-gray-400 font-light mt-4 max-w-xl mx-auto">Selecione seus grãos preferidos filtrando por
+                notas sensoriais, tipo de torra ou método de processamento.</p>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-4 gap-12 pb-24"
+            data-uid="div-marketplace-grid">
+
+            <!-- Sidebar Filters -->
+            <aside class="hidden lg:block space-y-8" id="tour-filters" data-uid="aside-tour-filters">
+                <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                    <h3 class="font-serif text-xl text-white">Filtros</h3>
+                    <button class="text-xs text-gold-500 uppercase font-bold hover:text-white transition-colors"
+                        type="button" title="Limpar filtros">Limpar</button>
+                </div>
+
+                <!-- Filtro: Categoria -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-sm uppercase tracking-wider text-gray-500">Formato</h4>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" class="w-5 h-5 rounded custom-checkbox focus:ring-0 cursor-pointer">
+                        <span class="text-gray-400 group-hover:text-gold-500 transition-colors">Grão Inteiro</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" checked
+                            class="w-5 h-5 rounded custom-checkbox focus:ring-0 cursor-pointer">
+                        <span class="text-gray-400 group-hover:text-gold-500 transition-colors">Moído</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" class="w-5 h-5 rounded custom-checkbox focus:ring-0 cursor-pointer">
+                        <span class="text-gray-400 group-hover:text-gold-500 transition-colors">Cápsulas</span>
+                    </label>
+                </div>
+
+                <!-- Filtro: Torra -->
+                <div class="space-y-3 pt-4 border-t border-white/10">
+                    <h4 class="font-bold text-sm uppercase tracking-wider text-gray-500">Nível de Torra</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            class="px-3 py-1 text-xs border border-white/20 rounded-full text-gray-400 hover:bg-gold-500 hover:text-obsidian hover:border-gold-500 transition-colors">Clara</button>
+                        <button
+                            class="px-3 py-1 text-xs border border-gold-500 bg-gold-500 text-obsidian font-bold rounded-full">Média</button>
+                        <button
+                            class="px-3 py-1 text-xs border border-white/20 rounded-full text-gray-400 hover:bg-gold-500 hover:text-obsidian hover:border-gold-500 transition-colors">Escura</button>
+                    </div>
+                </div>
+
+                <!-- Filtro: Notas Sensoriais -->
+                <div class="space-y-3 pt-4 border-t border-white/10">
+                    <h4 class="font-bold text-sm uppercase tracking-wider text-gray-500">Notas Sensoriais</h4>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" class="w-5 h-5 rounded custom-checkbox focus:ring-0 cursor-pointer">
+                        <span class="text-gray-400 group-hover:text-white transition-colors">Chocolate / Caramelo</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" class="w-5 h-5 rounded custom-checkbox focus:ring-0 cursor-pointer">
+                        <span class="text-gray-400 group-hover:text-white transition-colors">Frutado / Cítrico</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" class="w-5 h-5 rounded custom-checkbox focus:ring-0 cursor-pointer">
+                        <span class="text-gray-400 group-hover:text-white transition-colors">Floral</span>
+                    </label>
+                </div>
+
+                <!-- Filtro: Processo -->
+                <div class="space-y-3 pt-4 border-t border-white/10">
+                    <h4 class="font-bold text-sm uppercase tracking-wider text-gray-500">Processamento</h4>
+                    <label for="processamento-select" class="sr-only">Processamento</label>
+                    <select id="processamento-select"
+                        class="w-full bg-white/5 border border-white/10 text-gray-300 py-2 px-3 rounded focus:outline-none focus:border-gold-500"
+                        title="Processamento">
+                        <option>Todos</option>
+                        <option>Natural</option>
+                        <option>Cereja Descascado (CD)</option>
+                        <option>Fermentação Anaeróbica</option>
+                    </select>
+                </div>
+
+                <!-- Filtro: Preço -->
+                <div class="space-y-3 pt-4 border-t border-white/10">
+                    <h4 class="font-bold text-sm uppercase tracking-wider text-gray-500">Preço</h4>
+                    <label for="preco-range" class="sr-only">Preço</label>
+                    <input id="preco-range" type="range"
+                        class="w-full accent-gold-500 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer"
+                        title="Faixa de preço" placeholder="Selecione o preço">
+                    <div class="flex justify-between text-xs text-gray-500">
+                        <span>R$ 20</span>
+                        <span>R$ 200+</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Product Grid -->
+            <main class="lg:col-span-3" data-uid="main-marketplace">
+
+                <!-- Sorting Bar -->
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4" id="tour-sort">
+                    <span class="text-sm text-gray-500">Mostrando <strong class="text-white">12</strong> de 24
+                        produtos</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">Ordenar por:</span>
+                        <label for="sort-select" class="sr-only">Ordenar por</label>
+                        <select id="sort-select"
+                            class="bg-transparent border-b border-white/20 text-sm font-bold text-white py-1 focus:outline-none focus:border-gold-500 cursor-pointer"
+                            title="Ordenar por">
+                            <option class="text-black">Mais Vendidos</option>
+                            <option class="text-black">Preço: Menor para Maior</option>
+                            <option class="text-black">Preço: Maior para Menor</option>
+                            <option class="text-black">Lançamentos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                    <!-- Product Card 1 -->
+                    <div class="group bg-white/5 rounded-lg overflow-hidden border border-white/5 hover:border-gold-500/50 transition-all duration-300 reveal-on-scroll"
+                        id="tour-product-card" data-uid="div-tour-product-card-1">
+                        <div class="relative h-64 overflow-hidden">
+                            <div
+                                class="absolute top-2 left-2 bg-leaf-800 text-white text-[10px] uppercase font-bold px-2 py-1 z-10 rounded-sm">
+                                Arábica</div>
+                            <img src="/cafe-saca.png"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:-0"
+                                alt="Bourbon Amarelo" title="Bourbon Amarelo">
+
+                            <!-- Quick Actions Overlay -->
+                            <div
+                                class="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-center gap-4 border-t border-gold-500/30">
+                                <button class="text-gray-400 hover:text-gold-500 transition-colors" type="button"
+                                    title="Ver Detalhes"><i data-lucide="eye" class="w-5 h-5"></i></button>
+                                <button class="text-gray-400 hover:text-gold-500 transition-colors" type="button"
+                                    title="Favoritar"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex gap-2 mb-2" id="tour-tags" data-uid="div-tour-tags-1">
+                                <span
+                                    class="text-[10px] uppercase tracking-wider bg-white/10 text-gray-300 px-2 py-1 rounded">Chocolate</span>
+                                <span
+                                    class="text-[10px] uppercase tracking-wider bg-white/10 text-gray-300 px-2 py-1 rounded">Nozes</span>
+                            </div>
+                            <h3 class="font-serif text-lg font-bold text-white mb-1">Bourbon Amarelo</h3>
+                            <p class="text-xs text-gray-500 mb-3">Torra Média • Moído</p>
+                            <div class="flex items-center justify-between border-t border-white/5 pt-3">
+                                <span class="font-serif text-xl text-gold-500">R$ 45,00</span>
+                                <button
+                                    class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-gold-500 hover:text-obsidian transition-colors flex items-center justify-center"
+                                    type="button" title="Adicionar Bourbon Amarelo ao carrinho">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="group bg-white/5 rounded-lg overflow-hidden border border-white/5 hover:border-gold-500/50 transition-all duration-300 reveal-on-scroll"
+                        data-uid="div-tour-product-card-2">
+                        <div class="relative h-64 overflow-hidden">
+                            <div
+                                class="absolute top-2 left-2 bg-gold-500 text-obsidian text-[10px] uppercase font-bold px-2 py-1 z-10 rounded-sm">
+                                Premiado</div>
+                            <img src="/cafe-saca.png"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:-0"
+                                alt="Microlote Fermentado" title="Microlote Fermentado">
+                            <div
+                                class="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-center gap-4 border-t border-gold-500/30">
+                                <button class="text-gray-400 hover:text-gold-500 transition-colors" type="button"
+                                    title="Ver Detalhes"><i data-lucide="eye" class="w-5 h-5"></i></button>
+                                <button class="text-gray-400 hover:text-gold-500 transition-colors" type="button"
+                                    title="Favoritar"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex gap-2 mb-2" data-uid="div-tour-tags-2">
+                                <span
+                                    class="text-[10px] uppercase tracking-wider bg-white/10 text-gray-300 px-2 py-1 rounded">Frutas
+                                    Vermelhas</span>
+                            </div>
+                            <h3 class="font-serif text-lg font-bold text-white mb-1">Microlote Fermentado</h3>
+                            <p class="text-xs text-gray-500 mb-3">Torra Clara • Grãos</p>
+                            <div class="flex items-center justify-between border-t border-white/5 pt-3">
+                                <span class="font-serif text-xl text-gold-500">R$ 82,00</span>
+                                <button
+                                    class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-gold-500 hover:text-obsidian transition-colors flex items-center justify-center"
+                                    type="button" title="Adicionar Microlote Fermentado ao carrinho">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="group bg-white/5 rounded-lg overflow-hidden border border-white/5 hover:border-gold-500/50 transition-all duration-300 reveal-on-scroll"
+                        data-uid="div-tour-product-card-3">
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="/cafe-saca.png"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:grayscale-0"
+                                alt="Blend da Casa" title="Blend da Casa">
+                            <div
+                                class="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-center gap-4 border-t border-gold-500/30">
+                                <button class="text-gray-400 hover:text-gold-500 transition-colors" type="button"
+                                    title="Ver Detalhes"><i data-lucide="eye" class="w-5 h-5"></i></button>
+                                <button class="text-gray-400 hover:text-gold-500 transition-colors" type="button"
+                                    title="Favoritar"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex gap-2 mb-2" data-uid="div-tour-tags-3">
+                                <span
+                                    class="text-[10px] uppercase tracking-wider bg-white/10 text-gray-300 px-2 py-1 rounded">Caramelo</span>
+                            </div>
+                            <h3 class="font-serif text-lg font-bold text-white mb-1">Blend da Casa</h3>
+                            <p class="text-xs text-gray-500 mb-3">Torra Escura • Moído</p>
+                            <div class="flex items-center justify-between border-t border-white/5 pt-3">
+                                <span class="font-serif text-xl text-gold-500">R$ 68,00</span>
+                                <button
+                                    class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-gold-500 hover:text-obsidian transition-colors flex items-center justify-center"
+                                    type="button" title="Adicionar Blend da Casa ao carrinho">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="mt-16 flex justify-center gap-2" id="tour-pagination" data-uid="div-tour-pagination">
+                    <button
+                        class="w-10 h-10 flex items-center justify-center border border-white/10 rounded text-gray-500 hover:border-gold-500 hover:text-gold-500 transition-colors"
+                        type="button" title="Página anterior"><i data-lucide="chevron-left"
+                            class="w-4 h-4"></i></button>
+                    <button
+                        class="w-10 h-10 flex items-center justify-center bg-gold-500 text-obsidian rounded font-serif font-bold"
+                        type="button" title="Página 1">1</button>
+                    <button
+                        class="w-10 h-10 flex items-center justify-center border border-white/10 rounded text-gray-400 hover:bg-white/5 transition-colors"
+                        type="button" title="Página 2">2</button>
+                    <button
+                        class="w-10 h-10 flex items-center justify-center border border-white/10 rounded text-gray-400 hover:bg-white/5 transition-colors"
+                        type="button" title="Página 3">3</button>
+                    <button
+                        class="w-10 h-10 flex items-center justify-center border border-white/10 rounded text-gray-500 hover:border-gold-500 hover:text-gold-500 transition-colors"
+                        type="button" title="Próxima página"><i data-lucide="chevron-right"
+                            class="w-4 h-4"></i></button>
+                </div>
+
+            </main>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer id="tour-footer" class="relative z-30 bg-black border-t border-white/5 py-12 px-6"
+        data-uid="footer-tour-footer">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 text-gold-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C8 2 6 5 6 8C6 12 12 20 12 20C12 20 18 12 18 8C18 5 16 2 12 2Z" />
+                </svg>
+                <span class="font-serif text-lg tracking-widest text-white font-bold">CAFÉ DIRETO</span>
+            </div>
+
+            <div class="text-xs text-gray-500">
+                &copy; 2024-2026 Café Direto. Democratizando a excelência.
+            </div>
+
+            <div class="flex gap-6">
+                <a href="#" class="text-gray-500 hover:text-gold-500 transition-colors" title="Instagram"><i
+                        data-lucide="instagram" class="w-5 h-5"></i></a>
+                <a href="#" class="text-gray-500 hover:text-gold-500 transition-colors" title="Facebook"><i
+                        data-lucide="facebook" class="w-5 h-5"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>
